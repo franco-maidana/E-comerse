@@ -1,8 +1,8 @@
 import { Router } from "express";
-import Conexion from "../../utils/ConexionMySQL.js"; // Asegúrate de que este archivo exporta correctamente la conexión
+import { crear } from "../../controllers/user.controllers.js";
 
 const usuariosRouter = Router();
 
-
+usuariosRouter.post('/create', crear)
 
 export default usuariosRouter;

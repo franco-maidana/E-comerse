@@ -14,4 +14,5 @@ const ready = () => {
 server.listen(port, ready)
 
 server.use(express.json());
+server.use(express.urlencoded({ extended: true }));
 server.use('/', indexRouter);
