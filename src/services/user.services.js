@@ -15,6 +15,12 @@ class UserService {
           message: 'Faltan datos por ingresar'
         });
       }
+      // validacion de email
+      if (!email.endsWith('@gmail.com') && !email.endsWith('@hotmail.com')) {
+        return res.status(400).json({
+          message: 'Email incorrecto, por favor ingrese un email de tipo Gmail o Hotmail'
+        });
+      }
       // Hasheo de la contraseña con un salt
       const salt = await bcrypt.genSalt(10);  // Se genera un salt
       const hashedPassword = await bcrypt.hash(password, salt); // Se hashea la contraseña
