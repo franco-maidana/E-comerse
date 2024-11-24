@@ -38,7 +38,6 @@ class UserService {
         userId: user[0]
       });
     } catch (error) {
-      // Manejo de errores
       return next(error);
     }
   }
