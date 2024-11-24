@@ -5,7 +5,7 @@ class productoControllers {
     this.ProductoService = new ProductoService();
   }
 
-  crear = async (req,res, next) => {
+  crear = async (req,res,next) => {
     try {
       await this.ProductoService.crear(req,res,next)
     } catch (error) {
@@ -17,5 +17,5 @@ class productoControllers {
 
 export default productoControllers
 const producto = new productoControllers()
-const {crear } = producto
-export {crear }
+const { crear } = producto
+export { crear }

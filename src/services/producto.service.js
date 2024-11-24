@@ -8,30 +8,25 @@ class ProductoService {
   crear = async (req, res, next) => {
     try {
       const { product, marca, modelo, price, stock } = req.body;
-      console.log(product, marca, modelo, price, stock )
-      // Validar que todos los campos estén presentes
-      if (!product || !marca || !modelo || !price || !stock) {
+      const imagenPath = req.file ? req.file.path : null; // Asegurarse de que la imagen exista
+      // Validación de campos obligatorios
+      if (!product || !marca || !modelo || !price || !stock || !imagenPath) {
         return res.status(400).json({
-          message: 'Faltan datos por enviar'
+          message: "Todos los campos son obligatorios, incluyendo la imagen",
         });
       }
-      // Consulta para insertar el producto
-      const query = 'INSERT INTO productos (product, marca, modelo, price, stock) VALUES (?, ?, ?, ?, ?)';
-      const values = [product, marca, modelo, price, stock];
-      // Ejecutar la consulta de inserción
-      const [resultado] = await this.Conexion.query(query, values);
-      // Consulta para obtener el producto recién creado
-      const queryProducts = 'SELECT id, product, marca, modelo, price, stock FROM productos WHERE id = ?';
-      const [producto] = await this.Conexion.query(queryProducts, [resultado.insertId]);
-      // Respuesta correcta con los datos del producto creado
-      return res.status(201).json({
-        message: 'Producto creado exitosamente',
-        producto: producto[0]  // Devuelve los datos del producto creado
-      });
+      // Insertar los datos en la base de datos
+      const consulta = 'INSERT INTO productos (product, marca, modelo, price, stock, imagen) VALUES (?,?,?,?,?,?)';
+      const values = [product, marca, modelo, price, stock, imagenPath];
+  
+      const [ProductoNuevo] = await Conexion.query(consulta, values);
+  
+      return res.status(201).json({ message: "Producto creado exitosamente" });
     } catch (error) {
-      return next(error);  // Manejo de errores
+      return next(error);
     }
   }
+
 }
 
 export default ProductoService;
