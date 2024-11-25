@@ -1,9 +1,9 @@
 import { Router } from "express";
-import Conexion from "../../utils/ConexionMySQL.js";
-import { crear } from '../../controllers/producto.controllers.js'
+import { crear, eliminar, listar, listarId, modificar } from '../../controllers/producto.controllers.js'
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+
 
 
 const uploadDir = path.join(process.cwd(), 'uploads/producto'); 
@@ -28,5 +28,9 @@ const productoRouter = Router();
 
 
 productoRouter.post('/create', upload.single('imagen'), crear  );
+productoRouter.get('/products', listar )
+productoRouter.get('/products/:id', listarId )
+productoRouter.patch('/update/:id', modificar)
+productoRouter.delete('/drop/:id', eliminar)
 
 export default productoRouter;
