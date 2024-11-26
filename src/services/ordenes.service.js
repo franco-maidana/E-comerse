@@ -27,18 +27,31 @@ class OrdenesService {
     }
   }
 
-  listar = async (req,res,next) => {
+  listar = async (req, res, next) => {
     try {
-      const consulta = 'SELECT * FROM ordenes'
-      const [ordenes] = await Conexion.query(consulta)
-      return res.status(201).json({
+      // Consulta para obtener todas las órdenes con los datos del usuario y producto relacionados
+      const query = `
+        SELECT 
+          ordenes.id AS orden_id, ordenes.cantidad, ordenes.estado,
+          usuarios.id AS usuario_id, usuarios.first_name, usuarios.last_name,
+          productos.id AS producto_id, productos.product, productos.marca, productos.modelo, productos.price
+        FROM ordenes
+        INNER JOIN usuarios ON ordenes.usuario_id = usuarios.id
+        INNER JOIN productos ON ordenes.producto_id = productos.id;
+      `;
+      // Ejecutar la consulta
+      const [ordenes] = await Conexion.query(query);
+      // Devolver los resultados en la respuesta
+      return res.status(200).json({
         message: 'Listado de ordenes',
         ordenes: ordenes
-      })
+      });
     } catch (error) {
-      return next()
+      console.error('Error al listar las ordenes:', error);
+      return res.status(500).json({ message: 'Error al listar las ordenes' });
     }
   }
+  
 
   listarId = async (req,res,next) => {
     try {
