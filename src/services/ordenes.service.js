@@ -53,25 +53,46 @@ class OrdenesService {
   }
   
 
-  listarId = async (req,res,next) => {
+  listarId = async (req, res, next) => {
     try {
-      const { id } = req.params
-      const consulta = 'SELECT * FROM ordenes  WHERE id = ?'
-      const [ordenes] = await Conexion.query(consulta, [id])
+      const { id } = req.params; // ID del usuario
+      
+      // Consulta detallada con cálculo del precio total por producto y total general
+      const consulta = `
+        SELECT 
+          ordenes.id AS orden_id, ordenes.cantidad, ordenes.estado,
+          usuarios.id AS usuario_id, usuarios.first_name, usuarios.last_name,
+          productos.id AS producto_id, productos.product, productos.marca, productos.modelo, productos.price,
+          (ordenes.cantidad * productos.price) AS total_producto  -- Precio total por producto
+        FROM ordenes
+        INNER JOIN usuarios ON ordenes.usuario_id = usuarios.id
+        INNER JOIN productos ON ordenes.producto_id = productos.id
+        WHERE usuarios.id = ?;
+      `;
+      
+      const [ordenes] = await Conexion.query(consulta, [id]);
+  
       if (ordenes.length > 0) { 
+        // Calcular el precio total de todas las órdenes del usuario
+        const precioTotalFinal = ordenes.reduce((total, orden) => total + orden.total_producto, 0);
+  
         return res.status(200).json({ 
-          message: 'Orden encontrado',
-          usuario: ordenes[0]  
+          message: 'Órdenes encontradas',
+          ordenes,  // Detalles completos de las órdenes
+          precioTotalFinal // Precio total acumulado de todas las órdenes
         });
       } else {
         return res.status(404).json({ 
-          message: 'Orden no encontrado en la base de datos'
+          message: 'No se encontraron órdenes para este usuario en la base de datos'
         });
       }
     } catch (error) {
-      return next()
+      console.error('Error al buscar las órdenes:', error);
+      return next(error);  // Manda el error al middleware de manejo de errores
     }
-  }
+  };
+  
+  
 
   modificar = async (req, res, next) => {
     try {
