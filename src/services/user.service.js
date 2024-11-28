@@ -134,6 +134,21 @@ class UserService {
     }
   }
 
+  // metodo para buscar por email a los usuarios
+  buscarPorEmail = async (email) => {
+    try {
+      const query = 'SELECT * FROM usuarios WHERE email = ?';
+      const [users] = await this.Conexion.query(query, [email]);
+  
+      if (users.length > 0) {
+        return users[0]; // Devuelve el usuario encontrado
+      }
+      return null; // Devuelve null si no se encuentra el usuario
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }
 
 

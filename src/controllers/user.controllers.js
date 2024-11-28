@@ -45,9 +45,17 @@ class usuariosControllers {
       return next(error)
     }
   }
+
+  buscarPorEmail = async (req, res, next) => {
+    try {
+      await this.UserService.buscarPorEmail(req,res,next)
+    } catch (error) {
+      return next(error)
+    }
+  }
 }
 
 export default usuariosControllers
 const Controllers = new usuariosControllers()
-const  { crear, listar, listarId, modificar, eliminar } = Controllers
-export { crear, listar, listarId, modificar, eliminar };
+const  { crear, listar, listarId, modificar, eliminar , buscarPorEmail } = Controllers
+export { crear, listar, listarId, modificar, eliminar, buscarPorEmail };

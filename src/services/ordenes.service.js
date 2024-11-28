@@ -52,7 +52,6 @@ class OrdenesService {
     }
   }
   
-
   listarId = async (req, res, next) => {
     try {
       const { id } = req.params; // ID del usuario
@@ -92,8 +91,6 @@ class OrdenesService {
     }
   };
   
-  
-
   modificar = async (req, res, next) => {
     try {
       const {id} = req.params
