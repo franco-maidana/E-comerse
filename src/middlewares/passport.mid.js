@@ -7,29 +7,27 @@ const userService = new UserService();  // Crea una instancia de la clase
 
 
 
-passport.use(
-  new LocalStrategy(
-    {
-      usernameField: 'email',  
-      passwordField: 'password',
-    },
-    async(email , password , done ) => {
-      try {
-        const usuario = await userService.buscarPorEmail(email);
-        if (!usuario) {
-          return done(null, false, { message: 'Usuario no encontrado' });
+passport.use('login', new LocalStrategy(
+  {passReqToCallback: true , usernameField: 'email'},
+  async(req, email, password, done) => {
+    try {
+      const usuario = await userService.buscarPorEmail(email)
+      
+      if(usuario){
+        const verify = bcrypt.compareSync(password, usuario.password)
+        if(verify){
+          delete usuario.password
+          return done(null, usuario)
+        }else{
+          return done(null, false)
         }
-        const isMatch = await bcrypt.compare(password, usuario.password)
-        if(!isMatch){
-          return done(null, false , {message: 'Contraseña incorrecta'})
-        }
-        return done(null, usuario)
-
-      } catch (error) {
-        return done(error)
+      } else {
+        return done(null, false)
       }
+    } catch (error) {
+      return done(error)
     }
-  )
-)
+  }
+))
 
 export default passport;
