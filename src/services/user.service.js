@@ -55,6 +55,18 @@ class UserService {
     }
   }
 
+  async listarUsuariosPassport() {
+    try {
+      const consulta = 'SELECT id, first_name, last_name, email FROM usuarios';
+      const [users] = await this.Conexion.query(consulta);
+      return users;  // Devuelve la lista de usuarios
+    } catch (error) {
+      console.error('Error al listar usuarios:', error);
+      throw error;  // Maneja el error
+    }
+  }
+  
+
   listarId = async (req, res , next) => {
     try {
       const { id } = req.params
@@ -75,6 +87,23 @@ class UserService {
       return next(error)
     }
   }
+
+  async listarIdPassport(id) {
+    try {
+      const consulta = 'SELECT * FROM usuarios WHERE id = ?';
+      const [users] = await Conexion.query(consulta, [id]);
+      
+      if (users.length > 0) {
+        return users[0]; // Devuelve el usuario encontrado
+      } else {
+        return null; // Devuelve null si no se encuentra el usuario
+      }
+    } catch (error) {
+      console.error('Error al buscar usuario:', error);
+      throw error; // Maneja el error en Passport
+    }
+  }
+  
 
   modificar = async (req, res, next) => {
     try {

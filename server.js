@@ -5,6 +5,9 @@ import errorHandler from "./src/middlewares/errorHandler.mid.js";
 import pathHandler from "./src/middlewares/pathHandler.mid.js";
 import passport from "./src/middlewares/passport.mid.js";
 import session from "express-session";
+import cookieParser from 'cookie-parser';
+
+
 
 const server = express()
 
@@ -28,8 +31,10 @@ server.use(session({
 
 server.use(passport.initialize());
 server.use(passport.session());
+server.use(cookieParser());
 
+const router = new indexRouter()
 
-server.use('/', indexRouter);
+server.use('/', router.getRouter());
 server.use(errorHandler);
 server.use(pathHandler);

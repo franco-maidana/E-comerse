@@ -1,8 +1,9 @@
-import { Router } from "express";
+import CustomRouter from '../customRouter.js';
 import { crear, eliminar, listar, listarId, modificar } from '../../controllers/producto.controllers.js'
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+
 
 
 
@@ -24,13 +25,15 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-const productoRouter = Router();
+class productoRouter extends CustomRouter {
+  init(){
+    this.create('/create' , ['ADMIN', 'PREM'] ,upload.single('imagen'), crear  )  // funciona
+    this.listar('/products', ['USUARIO'] ,listar ) // funciona
+    this.listar('/products/:id', ['ADMIN', 'PREM'],listarId )  // funciona
+    this.modificar('/update/:id', ['ADMIN', 'PREM'] ,modificar)  // funciona
+    this.eliminar('/drop/:id', ['ADMIN', 'PREM'] ,eliminar) // funciona
+  }
+}
 
-
-productoRouter.post('/create', upload.single('imagen'), crear  );
-productoRouter.get('/products', listar )
-productoRouter.get('/products/:id', listarId )
-productoRouter.patch('/update/:id', modificar)
-productoRouter.delete('/drop/:id', eliminar)
 
 export default productoRouter;
