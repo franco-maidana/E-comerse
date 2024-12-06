@@ -1,5 +1,6 @@
 import Conexion from "../utils/ConexionMySQL.js";
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken'
 
 class UserService {
   constructor() {
@@ -107,41 +108,44 @@ class UserService {
 
   modificar = async (req, res, next) => {
     try {
-      const {id} = req.params;
-      const {first_name, last_name, email, password} = req.body
+      // Verifica si el token está en las cookies
+      const token = req.cookies.token;
+      if (!token) {
+        return res.status(401).json({ message: 'No autenticado' });
+      }
+      // Decodifica el token (usa tu clave secreta)
+      const decoded = jwt.verify(token, process.env.SECRET_TOKEN); // SECRET_TOKEN debe estar en tus variables de entorno
+      const userId = decoded.id; // Asegúrate de que el payload del token incluya el `id` del usuario
 
+      const { first_name, last_name, email, password } = req.body;
+  
       let campos = [];
       let valores = [];
-
-      if (first_name) {campos.push('first_name = ? '), valores.push(first_name)};
-      if (last_name) {campos.push('last_name = ? '), valores.push(last_name)};
-      if (email) {campos.push('email = ? '), valores.push(email)};
-      if (password) {campos.push('password = ? '), valores.push(password)};
-
-      if (campos.length === 0){
-        return res.status(400).json({
-          message: 'No se proporcionaron campos para modificar '
-        })
+  
+      if (first_name) { campos.push('first_name = ?'); valores.push(first_name); }
+      if (last_name) { campos.push('last_name = ?'); valores.push(last_name); }
+      if (email) { campos.push('email = ?'); valores.push(email); }
+      if (password) { campos.push('password = ?'); valores.push(password); }
+  
+      if (campos.length === 0) {
+        return res.status(400).json({ message: 'No se proporcionaron campos para modificar' });
       }
-      // ejecutamos la consulta 
-      const consulta = `UPDATE usuarios SET ${campos.join(' ')} WHERE id = ?`
-      valores.push(id)
-
-      const [resultado] = await Conexion.query(consulta, valores)
-
-      if(resultado.affectedRows === 0){
-        return res.status(404).json({
-          message: 'Usuario no encontrado o sin cambios '
-        })
+      // Ejecuta la consulta usando el `userId` del token
+      const consulta = `UPDATE usuarios SET ${campos.join(', ')} WHERE id = ?`;
+      valores.push(userId);
+  
+      const [resultado] = await Conexion.query(consulta, valores);
+  
+      if (resultado.affectedRows === 0) {
+        return res.status(404).json({ message: 'Usuario no encontrado o sin cambios' });
       }
-      // respuesta exito
-      return res.status(200).json({
-        message: 'Usuario actualizado correctamente'
-      })
+      // Respuesta exitosa
+      return res.status(200).json({ message: 'Usuario actualizado correctamente' });
+  
     } catch (error) {
-      return next(error)
+      return next(error);
     }
-  }
+  };
 
   eliminar = async (req, res, next) => {
     try {

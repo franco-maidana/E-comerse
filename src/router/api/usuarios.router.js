@@ -7,7 +7,7 @@ class usuariosRouter extends CustomRouter {
     this.create('/create', ['PUBLIC']  ,crear) // Funciona
     this.listar('/users', ['ADMIN','PREM'] ,listar) // Funciona
     this.listar('/users/:id', ['ADMIN', 'PREM'] , listarId) // funciona
-    this.modificar('/update/:id', ['USUARIO'] , modificar) // hacer modificaciones para que solo modifique el usuario logeado -- VER
+    this.modificar('/update/:id', ['USUARIO', 'ADMIN', 'PREM'] , modificar) // hacer modificaciones para que solo modifique el usuario logeado -- VER
     this.eliminar('/drop/:id', ['ADMIN'], eliminar)  // Funciona
   }
 }
