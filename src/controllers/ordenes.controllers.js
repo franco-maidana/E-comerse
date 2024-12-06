@@ -21,6 +21,14 @@ class OrdenesControllers {
     }
   }
 
+  listarOrdenes = async (req,res,next) => {
+    try {
+      await this.OrdenesControllers.listarOrdenes(req,res,next)
+    } catch (error) {
+      return next(error)
+    }
+  }
+
   listarId = async (req,res,next) => {
     try {
       await this.OrdenesControllers.listarId(req,res,next)
@@ -48,5 +56,5 @@ class OrdenesControllers {
 
 export default OrdenesControllers
 const ordenes = new OrdenesControllers()
-const {crear, listar, listarId, modificar, elimnar} = ordenes
-export {crear, listar, listarId ,modificar, elimnar}
+const {crear, listar, listarId, modificar, elimnar, listarOrdenes} = ordenes
+export {crear, listar, listarId ,modificar, elimnar, listarOrdenes}
